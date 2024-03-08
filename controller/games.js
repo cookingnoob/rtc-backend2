@@ -24,7 +24,21 @@ const addGame = async (req, res) => {
 }
 
 const updateGame = async (req, res) => {
-    const {id} = req.params
+    const {id} = req.params;
+    const {title, console, genre, price} = req.body
+
+    const updatedGame = await Games.findByIdAndUpdate(
+        id,
+        {title, console, genre, price},
+        {new: true, runValidators: true}
+    )
+    res.status(200).json({data: updatedGame})
 }
 
-module.exports = {getAllGames, getGamesByID, addGame}
+const deleteGame = async (req, res) => {
+    const {id} = req.params;
+    await Games.deleteOne({_id: id})
+    res.status(200).json({data: 'Juego eliminado'})
+}
+
+module.exports = {getAllGames, getGamesByID, addGame, updateGame, deleteGame}
