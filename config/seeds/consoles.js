@@ -24,4 +24,4 @@ const consoles = [
       "price": 399.99
     }
   ]
-  
+module.exports = consoles
