@@ -1,5 +1,6 @@
 const express = require("express");
 const gamesRouter = require('./routes/games')
+const consolesRouter = require('./routes/consoles')
 const dbConnection = require("./config/db");
 require('dotenv').config()
 
@@ -11,6 +12,7 @@ dbConnection()
 
 app.use('/games', gamesRouter)
 
+app.use('/consoles', consolesRouter)
 
 app.use('*', (req, res) => {
     res.status(404).json({data: 'Not found'})
