@@ -5,10 +5,14 @@ const getAllConsoles = async (req, res) => {
     res.status(200).json({data: consoles})
 }
 
-const getConsoleByID = async (req, res) => {
-    const {id} = req.params
-    const console = await Console.findById(id)
-    res.status(200).json({data: console})
+const getConsoleByID = async (req, res, next) => {
+    try{
+        const {id} = req.params
+        const console = await Console.findById(id)
+        res.status(200).json({data: console})
+    }catch(err){
+        next(err)
+    }
 }
 
 const newConsole = async (req, res) => {
@@ -23,21 +27,29 @@ const newConsole = async (req, res) => {
     res.status(201).json({data: addConsole})
 }
 
-const editGames = async (req, res) => {
+const editGames = async (req, res, next) => {
     const {id} = req.params
     const {name, company, games, price} = req.body
-    const modifiedGame = await Console.findByIdAndUpdate(
-        id,
-        {name, company, games, price},
-        {new: true, runValidators: true}
-    )
-    res.status(200).json({data: modifiedGame})
+    try{
+        const modifiedGame = await Console.findByIdAndUpdate(
+            id,
+            {name, company, games, price},
+            {new: true, runValidators: true}
+        )
+        res.status(200).json({data: modifiedGame})
+    }catch(err){
+        next(err)
+    }
 }
 
-const deleteConsole = async (req, res) => {
-    const {id} = req.params
-    await Console.findByIdAndDelete(id)
-    res.status(200).json({data: 'se eliminó la consola'})
+const deleteConsole = async (req, res, next) => {
+    try{
+        const {id} = req.params
+        await Console.findByIdAndDelete(id)
+        res.status(200).json({data: 'se eliminó la consola'})
+    } catch(err){
+        next(err)
+    }
 }
 
 module.exports = {getAllConsoles, getConsoleByID, newConsole, editGames, deleteConsole}

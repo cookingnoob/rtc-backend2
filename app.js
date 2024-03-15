@@ -2,11 +2,16 @@ const express = require("express");
 const gamesRouter = require('./routes/games')
 const consolesRouter = require('./routes/consoles')
 const dbConnection = require("./config/db");
+const main = require("./config/linkSchemas");
 require('dotenv').config()
 
 
 const app = express()
+
 app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+app.use(express.static('public'))
+
 
 dbConnection()
 
@@ -14,13 +19,18 @@ app.use('/games', gamesRouter)
 
 app.use('/consoles', consolesRouter)
 
-app.use('*', (req, res) => {
-    res.status(404).json({data: 'Not found'})
+app.use((req, res, next) => {
+    const err = new Error('not found')
+    err.status = 404
+    next(err)
 })
 
-app.use((error, req, res, next) => {
-    console.error(error)
-    res.status(500).json({data: 'Internal server error'})
+app.use((err, req, res, next) => {
+    res.status(err.status || 500)
+    const message = err.status === 404 ? err.message : 'Internal server error' 
+    
+   
+    res.json({message: message})
 })
 
 const PORT = 4001

@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const gameSchema = new mongoose.Schema({
     title: String,
-    console: String,
+    console: {type: mongoose.Schema.Types.ObjectId, ref: 'Console'},
     genre: String,
     price: Number
 })

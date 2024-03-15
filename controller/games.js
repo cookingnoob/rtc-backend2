@@ -5,10 +5,14 @@ const getAllGames = async (req, res) => {
     res.status(200).json({data: games})
 }
 
-const getGamesByID = async (req, res) => {
-    const {id} = req.params
-    const game = await Games.findById(id)
-    res.status(200).json({data: game})
+const getGamesByID = async (req, res, next) => {
+    try {
+        const {id} = req.params
+        const game = await Games.findById(id)
+        res.status(200).json({data: game})
+    } catch (error) {
+        next(error)
+    }
 }
 
 const addGame = async (req, res) => {
@@ -23,22 +27,29 @@ const addGame = async (req, res) => {
     res.status(201).json({data: newGame})
 }
 
-const updateGame = async (req, res) => {
+const updateGame = async (req, res, next) => {
     const {id} = req.params;
     const {title, console, genre, price} = req.body
-
-    const updatedGame = await Games.findByIdAndUpdate(
-        id,
-        {title, console, genre, price},
-        {new: true, runValidators: true}
-    )
-    res.status(200).json({data: updatedGame})
+    try{
+        const updatedGame = await Games.findByIdAndUpdate(
+            id,
+            {title, console, genre, price},
+            {new: true, runValidators: true}
+        )
+        res.status(200).json({data: updatedGame})
+    }catch(err) {
+        next(err)
+    }
 }
 
-const deleteGame = async (req, res) => {
+const deleteGame = async (req, res, next) => {
     const {id} = req.params;
+    try{
     await Games.deleteOne({_id: id})
-    res.status(200).json({data: 'Juego eliminado'})
+    res.status(200).json({data: 'Juego eliminado'}) 
+    }catch(err){
+        next(err)
+    }
 }
 
 module.exports = {getAllGames, getGamesByID, addGame, updateGame, deleteGame}
