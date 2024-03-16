@@ -3,9 +3,6 @@ const mongoose = require('mongoose')
 const consoleSchema = new mongoose.Schema({
     name: String,
     company: String,
-    games: [{
-        type: String
-    }],
     price: Number
 })
 
