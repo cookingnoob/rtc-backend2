@@ -1,8 +1,12 @@
 const Console = require("../models/consoles");
 
-const getAllConsoles = async (req, res) => {
-    const consoles = await Console.find()
-    res.status(200).json({data: consoles})
+const getAllConsoles = async (req, res, next) => {
+    try{
+        const consoles = await Console.find()
+        res.status(200).json({data: consoles})
+    } catch(error){
+        next(error)
+    }
 }
 
 const getConsoleByID = async (req, res, next) => {
@@ -15,8 +19,9 @@ const getConsoleByID = async (req, res, next) => {
     }
 }
 
-const newConsole = async (req, res) => {
+const newConsole = async (req, res, next) => {
     const {name, company, games, price} = req.body
+    try{
     const addConsole = new Console ({
         name,
         company,
@@ -25,6 +30,9 @@ const newConsole = async (req, res) => {
     })
     await addConsole.save()
     res.status(201).json({data: addConsole})
+    }catch(error){
+        next(error)
+    }
 }
 
 const editGames = async (req, res, next) => {
@@ -51,5 +59,7 @@ const deleteConsole = async (req, res, next) => {
         next(err)
     }
 }
+//get que consiga la consola y los juegos relacionados 
+//put que permita modificar un juego
 
 module.exports = {getAllConsoles, getConsoleByID, newConsole, editGames, deleteConsole}

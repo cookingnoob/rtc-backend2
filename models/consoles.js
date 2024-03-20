@@ -3,7 +3,13 @@ const mongoose = require('mongoose')
 const consoleSchema = new mongoose.Schema({
     name: String,
     company: String,
-    price: Number
+    games: [
+        {type: String}
+    ],
+    price: Number,
+}, {
+    timestamps: true,
+    model: 'consoles'
 })
 
 const Console = mongoose.model('Console', consoleSchema)

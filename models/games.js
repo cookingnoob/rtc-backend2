@@ -5,6 +5,9 @@ const gameSchema = new mongoose.Schema({
     console: String,
     genre: String,
     price: Number
+}, {
+    timestamps: true,
+    model: 'games'
 })
 
 const Games = mongoose.model('Games', gameSchema)

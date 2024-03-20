@@ -2,8 +2,7 @@ const express = require("express");
 const gamesRouter = require("./routes/games");
 const consolesRouter = require("./routes/consoles");
 const dbConnection = require("./config/db");
-const main = require("./config/linkSchemas");
-const updateGamesWithConsoleId = require("./config/linkSchemas");
+const {updateGamesWithConsoleId, updateConsolesWithGames} = require("./config/linkSchemas");
 const seedDB = require("./config/seeds/seedDB");
 require("dotenv").config();
 
@@ -16,6 +15,7 @@ app.use(express.static("public"));
 dbConnection();
 // seedDB()
 // updateGamesWithConsoleId()
+// updateConsolesWithGames()
 app.use("/games", gamesRouter);
 
 app.use("/consoles", consolesRouter);

@@ -52,4 +52,8 @@ const deleteGame = async (req, res, next) => {
     }
 }
 
+//get que consiga la consola a la que el juego esta relacionado
+//un put que permita agregar/eliminar la consola
+
+
 module.exports = {getAllGames, getGamesByID, addGame, updateGame, deleteGame}

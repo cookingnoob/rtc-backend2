@@ -19,5 +19,22 @@ const updateGamesWithConsoleId = async () => {
     }
 }
 
-module.exports = updateGamesWithConsoleId
+const updateConsolesWithGames = async () => {
+    try{
+        const consoles = await Console.find()
+
+        for (const c of consoles){
+            const consoleGames = await Games.find({console : c._id})
+            const gamesIds = consoleGames.map(game => game._id)
+
+            c.games = gamesIds
+
+            await c.save()
+        }
+    }catch(error){
+        console.log(error)
+    }
+}
+
+module.exports = {updateGamesWithConsoleId, updateConsolesWithGames}
 

@@ -19,4 +19,7 @@ router.use((req,res,next) => {
     next(err)
 })
 
+//get que consiga la consola y los juegos relacionados 
+//put que permita modificar un juego
+
 module.exports = router
