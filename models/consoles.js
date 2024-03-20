@@ -1,17 +1,23 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const consoleSchema = new mongoose.Schema({
+const consoleSchema = new mongoose.Schema(
+  {
     name: String,
     company: String,
     games: [
-        {type: String}
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Games",
+      },
     ],
     price: Number,
-}, {
+  },
+  {
     timestamps: true,
-    model: 'consoles'
-})
+    model: "consoles",
+  }
+);
 
-const Console = mongoose.model('Console', consoleSchema)
+const Console = mongoose.model("Console", consoleSchema);
 
-module.exports = Console
+module.exports = Console;

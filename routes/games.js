@@ -1,25 +1,34 @@
-const express = require('express')
-const {getAllGames, getGamesByID, addGame, updateGame, deleteGame} = require('../controller/games')
+const express = require("express");
+const {
+  getAllGames,
+  getGamesByID,
+  addGame,
+  updateGame,
+  deleteGame,
+  getGamesWithConsole,
+} = require("../controller/games");
 
-const router = express.Router()
+const router = express.Router();
 
-router.get('/', getAllGames)
+router.get("/", getAllGames);
 
-router.get('/:id', getGamesByID)
+router.get("/:id", getGamesByID);
 
-router.post('/add', addGame)
+router.get("/:id/console", getGamesWithConsole)
 
-router.put('/update/:id', updateGame)
+router.post("/add", addGame);
 
-router.delete('/delete/:id', deleteGame)
+router.put("/update/:id", updateGame);
+
+router.delete("/delete/:id", deleteGame);
 
 router.use((req, res, next) => {
-    const err = new Error('Game not found')
-    err.status = 404
-    next(err)
-})
+  const err = new Error("Game not found");
+  err.status = 404;
+  next(err);
+});
 
 //get que consiga la consola a la que el juego esta relacionado
 //un put que permita agregar/eliminar la consola
 
-module.exports = router
+module.exports = router;

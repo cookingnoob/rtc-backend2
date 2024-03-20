@@ -2,7 +2,10 @@ const express = require("express");
 const gamesRouter = require("./routes/games");
 const consolesRouter = require("./routes/consoles");
 const dbConnection = require("./config/db");
-const {updateGamesWithConsoleId, updateConsolesWithGames} = require("./config/linkSchemas");
+const {
+  updateGamesWithConsoleId,
+  updateConsolesWithGames,
+} = require("./config/linkSchemas");
 const seedDB = require("./config/seeds/seedDB");
 require("dotenv").config();
 
