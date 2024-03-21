@@ -3,9 +3,10 @@ const {
   getAllConsoles,
   getConsoleByID,
   newConsole,
-  editGames,
+  editConsole,
   deleteConsole,
   getConsoleWithGames,
+  editGameList,
 } = require("../controller/consoles");
 
 const router = express.Router();
@@ -18,7 +19,9 @@ router.get("/:id/games", getConsoleWithGames)
 
 router.post("/add", newConsole);
 
-router.put("/edit/:id", editGames);
+router.put("/edit/:id", editConsole);
+
+router.put("/:id/update-games", editGameList)
 
 router.delete("/delete/:id", deleteConsole);
 
@@ -28,7 +31,7 @@ router.use((req, res, next) => {
   next(err);
 });
 
-//get que consiga la consola y los juegos relacionados
+
 //put que permita modificar un juego
 
 module.exports = router;

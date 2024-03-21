@@ -1,4 +1,5 @@
 const Console = require("../models/consoles");
+const Games = require("../models/games");
 
 const getAllConsoles = async (req, res, next) => {
   try {
@@ -22,7 +23,7 @@ const getConsoleByID = async (req, res, next) => {
 const getConsoleWithGames = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const consoleWithGames = await Console.findById(id).populate('games');
+    const consoleWithGames = await Console.findById(id).populate('games', 'title');
     res.status(200).json({ data: consoleWithGames });
   } catch (error) {
     next(error)
@@ -45,7 +46,7 @@ const newConsole = async (req, res, next) => {
   }
 };
 
-const editGames = async (req, res, next) => {
+const editConsole = async (req, res, next) => {
   const { id } = req.params;
   const { name, company, games, price } = req.body;
   try {
@@ -60,6 +61,49 @@ const editGames = async (req, res, next) => {
   }
 };
 
+const editGameList = async (req, res, next) => {
+  try {
+    const {id} = req.params;
+    const {gameName, genre, price, deleteGame} = req.body
+
+    const gamingConsole = await Console.findById(id)
+
+    if(!gamingConsole){
+      const error = new Error('no encontramos la consola')
+      error.status = 404
+      return next(error)
+    }
+
+    const gameAlreadyInDB = await Games.findOne({title: gameName})
+
+    if(deleteGame){
+      gamingConsole.games.pull(gameAlreadyInDB)
+      await gamingConsole.save()
+      res.status(200).json({message: 'Se elimino el juego de la lista'})
+      return
+    } else if(gameAlreadyInDB){
+      const error = new Error('este juego ya existe en el catalogo')
+      error.status = 409
+      next(error)
+    }else {
+      const newGame = await new Games({
+        title: gameName,
+        console: gamingConsole._id,
+        genre,
+        price
+      })
+      await newGame.save()
+      gamingConsole.games.push(newGame._id)
+      await gamingConsole.save()
+      res.status(201).json({message: 'se agrego con exito el juego', data: newGame, gamingConsole})
+    }
+
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}
+
 const deleteConsole = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -69,7 +113,7 @@ const deleteConsole = async (req, res, next) => {
     next(err);
   }
 };
-//get que consiga la consola y los juegos relacionados
+
 //put que permita modificar un juego
 
 module.exports = {
@@ -77,6 +121,7 @@ module.exports = {
   getConsoleByID,
   getConsoleWithGames,
   newConsole,
-  editGames,
+  editConsole,
+  editGameList,
   deleteConsole,
 };

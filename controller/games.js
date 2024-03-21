@@ -1,3 +1,4 @@
+const Console = require("../models/consoles");
 const Games = require("../models/games");
 
 const getAllGames = async (req, res) => {
@@ -53,6 +54,38 @@ const updateGame = async (req, res, next) => {
   }
 };
 
+const updateGameConsole = async (req, res, next) => {
+  try {
+    const {id} = req.params
+    const {consoleName, delete: deleteConsole} = req.body
+
+    const game = await Games.findById(id)
+
+    if(!game){
+      const error = new Error('no encontramos el juego')
+      error.status = 404
+      return next(error)
+    }
+
+    if(deleteConsole === true){
+      game.console = null
+    } else {
+      const console = await Console.findOne({name: consoleName})
+      if(!console) {
+        const error = new Error('no encontramos la consola')
+        error.status = 404
+        return next(error)
+      }
+      game.console = console._id
+    }
+
+    await game.save()
+    res.status(200).json({message : 'se actualizo la informacion del videojuego', data: game})
+  } catch (error) {
+    next(error)
+  }
+}
+
 const deleteGame = async (req, res, next) => {
   const { id } = req.params;
   try {
@@ -63,7 +96,6 @@ const deleteGame = async (req, res, next) => {
   }
 };
 
-//get que consiga la consola a la que el juego esta relacionado
 //un put que permita agregar/eliminar la consola
 
-module.exports = { getAllGames, getGamesByID, addGame, updateGame, deleteGame, getGamesWithConsole };
+module.exports = { getAllGames, getGamesByID, addGame, updateGame, deleteGame, getGamesWithConsole, updateGameConsole };
