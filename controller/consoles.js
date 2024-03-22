@@ -114,8 +114,6 @@ const deleteConsole = async (req, res, next) => {
   }
 };
 
-//put que permita modificar un juego
-
 module.exports = {
   getAllConsoles,
   getConsoleByID,

@@ -31,7 +31,4 @@ router.use((req, res, next) => {
   next(err);
 });
 
-
-//put que permita modificar un juego
-
 module.exports = router;
