@@ -27,6 +27,7 @@ const updateGamesWithConsoleId = async () => {
     );
     console.log('se actualizaron las consolas de los videojuegos')
 };
+
 /**
  * Actualiza el array de juegos en la consola
  * Cambia el valor de los titulos de los juegos por su id

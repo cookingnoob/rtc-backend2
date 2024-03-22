@@ -1,6 +1,7 @@
 const Console = require("../models/consoles");
 const Games = require("../models/games");
 
+//GET obtiene todas las consolas en la coleccion
 const getAllConsoles = async (req, res, next) => {
   try {
     const consoles = await Console.find();
@@ -10,26 +11,41 @@ const getAllConsoles = async (req, res, next) => {
   }
 };
 
+//GET busca una consola por su id
 const getConsoleByID = async (req, res, next) => {
   try {
     const { id } = req.params;
     const console = await Console.findById(id);
+    //manejo de error si no hay consola
+    if(!console){
+      const error = new Error('no se encontro la consola')
+      error.status = 404
+      next(error)
+    }
+    //respuesta existosa
     res.status(200).json({ data: console });
   } catch (err) {
     next(err);
   }
 };
 
+//GET Busca una consola por su id y popula la informacion de los juegos
 const getConsoleWithGames = async (req, res, next) => {
   try {
     const { id } = req.params;
     const consoleWithGames = await Console.findById(id).populate('games', 'title');
+    if(!consoleWithGames){
+      const error = new Error('No se encontro la consola ')
+      error.status = 404
+      next(error)
+    }
     res.status(200).json({ data: consoleWithGames });
   } catch (error) {
     next(error)
   }
 }
 
+//POST agrega una nueva consola
 const newConsole = async (req, res, next) => {
   const { name, company, games, price } = req.body;
   try {
@@ -46,6 +62,7 @@ const newConsole = async (req, res, next) => {
   }
 };
 
+//PUT edita los valores de una consoal
 const editConsole = async (req, res, next) => {
   const { id } = req.params;
   const { name, company, games, price } = req.body;
@@ -61,6 +78,7 @@ const editConsole = async (req, res, next) => {
   }
 };
 
+//PUT edita la lista de juegos
 const editGameList = async (req, res, next) => {
   try {
     const {id} = req.params;
@@ -103,11 +121,16 @@ const editGameList = async (req, res, next) => {
     next(error)
   }
 }
-
+//DELETE borra una consola por su id
 const deleteConsole = async (req, res, next) => {
   try {
     const { id } = req.params;
-    await Console.findByIdAndDelete(id);
+    const deletedConsole = await Console.findByIdAndDelete(id);
+    if(!deletedConsole){
+      const error = new Error('no se encontró la consola que querias borrar')
+      error.status = 404
+      next(error)
+    }
     res.status(200).json({ data: "se eliminó la consola" });
   } catch (err) {
     next(err);

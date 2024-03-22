@@ -38,9 +38,17 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  const message = err.status === 404 ? err.message : "Internal server error";
-  res.json({ message: message });
+  console.error(err)
+
+  if(err.status){
+    res.status(err.status).json({error: err.message})
+  }else if(err.name === 'ValidationError'){
+    res.status(400).json({error: 'Validacion fallida', error: err.message})
+  } else if(err.code && err.code === 11000){
+    res.status(409).json({error: 'Se duplica la informacion'})
+  }else {
+    res.status(500).json({ message: 'error interno del servidor' });
+  }
 });
 
 const PORT = 4001;
