@@ -7,6 +7,11 @@ const gameSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Console",
     },
+    /**
+     * nombre de la consola en la seed
+     * se cambia despues para obtener el id de mongo
+     * console: string
+     */
     genre: String,
     price: Number,
   },
