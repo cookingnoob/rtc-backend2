@@ -88,9 +88,9 @@ const updateGame = async (req, res, next) => {
 
 //PUT actualiza la informacion de la consola de un juego, ya sea agregar o eliminar
 const updateGameConsole = async (req, res, next) => {
+  const { id } = req.params;
+  const { consoleName } = req.body;
   try {
-    const { id } = req.params;
-    const { consoleName, delete: deleteConsole } = req.body;
 
     const game = await Games.findById(id);
     //manejo de error si no se encontro el juego
@@ -106,12 +106,6 @@ const updateGameConsole = async (req, res, next) => {
       const error = new Error("no existe la consola que quieres agregar");
       error.status = 404;
       return next(error);
-      //elimina el valor de la consola en el juego
-    } else if (deleteConsole === true) {
-      game.console = null;
-      await game.save();
-      res.status(200).json({ message: "se elimino la consola", data: game });
-      //si el juego ya tiene enlazada la consola que se quiere agregar manda un aviso
     } else {
       if (game.console && game.console.equals(consoleInDB._id)) {
         res
@@ -129,6 +123,26 @@ const updateGameConsole = async (req, res, next) => {
           .json({ message: "se actualizó la consola del juego", data: game });
       }
     }
+  } catch (error) {
+    next(error);
+  }
+};
+//borra la consola del juego
+const deleteGameConsole = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+
+    const game = await Games.findById(id);
+    //manejo de error si no se encontro el juego
+    if (!game) {
+      const error = new Error("no encontramos el juego");
+      error.status = 404;
+      return next(error);
+    }
+    game.console = null;
+    await game.save();
+    res.status(200).json({ message: "se elimino la consola", data: game });
+
   } catch (error) {
     next(error);
   }
@@ -159,4 +173,5 @@ module.exports = {
   deleteGame,
   getGamesWithConsole,
   updateGameConsole,
+  deleteGameConsole
 };

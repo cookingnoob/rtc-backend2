@@ -31,4 +31,4 @@ const seedDB = async () => {
 dbConnection()
 seedDB()
 
-module.exports = seedDB;
+
