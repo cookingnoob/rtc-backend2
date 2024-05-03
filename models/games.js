@@ -7,7 +7,7 @@ const gameSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Console",
     },
-    consoleName: [{ type: String }],
+    consoleName: { type: String },
     genre: String,
     price: Number,
   },

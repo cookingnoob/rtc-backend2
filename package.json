@@ -6,8 +6,7 @@
   "scripts": {
     "start": "nodemon app",
     "seed": "node ./config/seeds/seedDB.js",
-    "link-data": "node ./config/linkSchemas.js",
-    "reseed" : "npm run start && npm run seed && npm run link-data"
+    "link-data": "node ./config/linkSchemas.js"
   },
   "keywords": [],
   "author": "",

@@ -1,3 +1,5 @@
+require("dotenv").config();
+const dbConnection = require("./db");
 const Console = require("../models/consoles");
 const Games = require("../models/games");
 
@@ -8,24 +10,24 @@ const Games = require("../models/games");
  * Cambia el campo console de el nombre en string por el id de la consola en console
  */
 const updateGamesWithConsoleId = async () => {
-    const games = await Games.find();
-    await Promise.all(
-      games.map(async (game) => {
-        try{
-          const gameConsole = await Console.findOne({ name: game.console });
-          if(!gameConsole){
-            console.error(`no existe la consola de ${game.title}`)
-            return
-          }else{
-              game.console = gameConsole._id;
-              await game.save();
-          }
-        }catch(error){
-          console.error(`Error en actualizar el juego ${game.title}. Error ${error.message}`)
-        }
-      })
-    );
-    console.log('se actualizaron las consolas de los videojuegos')
+  const games = await Games.find();
+  for (const game of games) {
+    try {
+      const gameConsole = await Console.findOne({ name: game.consoleName });
+      if (!gameConsole) {
+        console.error(`no existe la consola de ${game.title}`)
+        continue
+      } else {
+        await Games.updateOne({ _id: game._id }, {
+          $set: { console: gameConsole._id },
+          $unset: { consoleName: "" }
+        })
+      }
+      console.log('se actualizaron las consolas de los videojuegos')
+    } catch (error) {
+      console.error(`Error en actualizar el juego ${game.title}. Error ${error.message}`)
+    }
+  }
 };
 
 /**
@@ -33,18 +35,25 @@ const updateGamesWithConsoleId = async () => {
  * Cambia el valor de los titulos de los juegos por su id
  */
 const updateConsolesWithGames = async () => {
-    const consoles = await Console.find();
-    for (const c of consoles) {
-      try{
-        const consoleGames = await Games.find({ console: c._id });
-        const gamesIds = consoleGames.map((game) => game._id);
-        c.games = gamesIds;
-        await c.save();
-      }catch(error){
-        console.error(`No se pudo actualizar la consola ${c.name}. Error ${error.message}`)
-      }
+  const consoles = await Console.find();
+  for (const c of consoles) {
+    try {
+      const consoleGames = await Games.find({ console: c._id });
+      const gamesIds = consoleGames.map((game) => game._id);
+      await Console.updateOne({ _id: c._id }, {
+        $set: { games: gamesIds },
+        $unset: { gamesNames: "" }
+      })
+      console.log('se actualizaron los videojuegos de las consolas')
+    } catch (error) {
+      console.error(`No se pudo actualizar la consola ${c.name}. Error ${error.message}`)
     }
-
+  }
 };
+const linkingFlow = async () => {
+  await dbConnection()
+  await updateGamesWithConsoleId()
+  updateConsolesWithGames()
+}
+linkingFlow()
 
-module.exports = { updateGamesWithConsoleId, updateConsolesWithGames };
