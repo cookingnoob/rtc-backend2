@@ -93,7 +93,7 @@ const editConsole = async (req, res, next) => {
 //PUT edita la lista de juegos
 const editGameList = async (req, res, next) => {
   const { id } = req.params;
-  const { gameName, genre, price, deleteGame } = req.body
+  const { gameName, genre, price } = req.body
   try {
 
     const gamingConsole = await Console.findById(id)
@@ -105,13 +105,7 @@ const editGameList = async (req, res, next) => {
     }
 
     const gameAlreadyInDB = await Games.findOne({ title: gameName })
-
-    if (deleteGame) {
-      gamingConsole.games.pull(gameAlreadyInDB)
-      await gamingConsole.save()
-      res.status(200).json({ message: 'Se elimino el juego de la lista' })
-      return
-    } else if (gameAlreadyInDB) {
+    if (gameAlreadyInDB) {
       const error = new Error('este juego ya existe en el catalogo')
       error.status = 409
       next(error)
@@ -127,9 +121,31 @@ const editGameList = async (req, res, next) => {
       await gamingConsole.save()
       res.status(201).json({ message: 'se agrego con exito el juego', data: newGame, gamingConsole })
     }
-
   } catch (error) {
-    console.log(error)
+    next(error)
+  }
+}
+//elima el juego de la consola
+const deleteGameFromList = async (req, res, next) => {
+  const { id } = req.params;
+  const { gameName } = req.body
+  try {
+
+    const gamingConsole = await Console.findById(id)
+
+    if (!gamingConsole) {
+      const error = new Error('no encontramos la consola')
+      error.status = 404
+      return next(error)
+    }
+
+    const gameAlreadyInDB = await Games.findOne({ title: gameName })
+
+    gamingConsole.games.pull(gameAlreadyInDB)
+    await gamingConsole.save()
+    res.status(200).json({ message: 'Se elimino el juego de la lista' })
+    return
+  } catch (error) {
     next(error)
   }
 }
@@ -157,4 +173,5 @@ module.exports = {
   editConsole,
   editGameList,
   deleteConsole,
+  deleteGameFromList
 };

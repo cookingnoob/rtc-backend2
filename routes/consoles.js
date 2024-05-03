@@ -7,8 +7,9 @@ const {
   deleteConsole,
   getConsoleWithGames,
   editGameList,
+  deleteGameFromList,
 } = require("../controller/consoles");
-const { deleteGameConsole } = require("../controller/games");
+
 
 const router = express.Router();
 
@@ -26,7 +27,7 @@ router.put("/:id/update-games", editGameList)
 
 router.delete("/delete/:id", deleteConsole);
 
-
+router.delete("/delete-game/:id", deleteGameFromList)
 
 router.use((req, res, next) => {
   const err = new Error("Console not found");
