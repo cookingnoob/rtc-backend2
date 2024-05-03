@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app"
+    "start": "nodemon app",
+    "seed": "node ./config/seeds/seedDB.js",
+    "link-data": "node ./config/linkSchemas.js",
+    "reseed" : "npm run start && npm run seed && npm run link-data"
   },
   "keywords": [],
   "author": "",

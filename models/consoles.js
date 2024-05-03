@@ -2,8 +2,12 @@ const mongoose = require("mongoose");
 
 const consoleSchema = new mongoose.Schema(
   {
-    name: String,
+    name: {
+      type: String,
+      unique: true
+    },
     company: String,
+    gamesNames: [{ type: String }],
     games: [
       {
         type: mongoose.Schema.Types.ObjectId,
