@@ -39,5 +39,5 @@ app.use((err, req, res, next) => {
 const PORT = 4001;
 
 app.listen(PORT, () => {
-  console.log(`conectado al puerto ${PORT}`);
+  console.log(`conectado en http://localhost:${PORT}`);
 });

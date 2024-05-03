@@ -17,7 +17,7 @@ const getConsoleByID = async (req, res, next) => {
     const { id } = req.params;
     const console = await Console.findById(id);
     //manejo de error si no hay consola
-    if(!console){
+    if (!console) {
       const error = new Error('no se encontro la consola')
       error.status = 404
       next(error)
@@ -34,7 +34,7 @@ const getConsoleWithGames = async (req, res, next) => {
   try {
     const { id } = req.params;
     const consoleWithGames = await Console.findById(id).populate('games', 'title');
-    if(!consoleWithGames){
+    if (!consoleWithGames) {
       const error = new Error('No se encontro la consola ')
       error.status = 404
       next(error)
@@ -49,6 +49,12 @@ const getConsoleWithGames = async (req, res, next) => {
 const newConsole = async (req, res, next) => {
   const { name, company, games, price } = req.body;
   try {
+    const consoleExists = await Console.findOne({ name: name })
+    if (consoleExists) {
+      const error = new Error('la consola ya existe')
+      error.status = 400
+      return next(error)
+    }
     const addConsole = new Console({
       name,
       company,
@@ -67,10 +73,16 @@ const editConsole = async (req, res, next) => {
   const { id } = req.params;
   const { name, company, games, price } = req.body;
   try {
+    const consoleExists = await Console.findOne({ name: name, _id: { $ne: id } })
+    if (consoleExists) {
+      const error = new Error('la consola ya existe')
+      error.status = 400
+      return next(error)
+    }
     const modifiedGame = await Console.findByIdAndUpdate(
       id,
       { name, company, games, price },
-      { new: true, runValidators: true }
+      { new: true, runVailidators: true }
     );
     res.status(200).json({ data: modifiedGame });
   } catch (err) {
@@ -80,30 +92,30 @@ const editConsole = async (req, res, next) => {
 
 //PUT edita la lista de juegos
 const editGameList = async (req, res, next) => {
+  const { id } = req.params;
+  const { gameName, genre, price, deleteGame } = req.body
   try {
-    const {id} = req.params;
-    const {gameName, genre, price, deleteGame} = req.body
 
     const gamingConsole = await Console.findById(id)
 
-    if(!gamingConsole){
+    if (!gamingConsole) {
       const error = new Error('no encontramos la consola')
       error.status = 404
       return next(error)
     }
 
-    const gameAlreadyInDB = await Games.findOne({title: gameName})
+    const gameAlreadyInDB = await Games.findOne({ title: gameName })
 
-    if(deleteGame){
+    if (deleteGame) {
       gamingConsole.games.pull(gameAlreadyInDB)
       await gamingConsole.save()
-      res.status(200).json({message: 'Se elimino el juego de la lista'})
+      res.status(200).json({ message: 'Se elimino el juego de la lista' })
       return
-    } else if(gameAlreadyInDB){
+    } else if (gameAlreadyInDB) {
       const error = new Error('este juego ya existe en el catalogo')
       error.status = 409
       next(error)
-    }else {
+    } else {
       const newGame = await new Games({
         title: gameName,
         console: gamingConsole._id,
@@ -113,7 +125,7 @@ const editGameList = async (req, res, next) => {
       await newGame.save()
       gamingConsole.games.push(newGame._id)
       await gamingConsole.save()
-      res.status(201).json({message: 'se agrego con exito el juego', data: newGame, gamingConsole})
+      res.status(201).json({ message: 'se agrego con exito el juego', data: newGame, gamingConsole })
     }
 
   } catch (error) {
@@ -126,7 +138,7 @@ const deleteConsole = async (req, res, next) => {
   try {
     const { id } = req.params;
     const deletedConsole = await Console.findByIdAndDelete(id);
-    if(!deletedConsole){
+    if (!deletedConsole) {
       const error = new Error('no se encontró la consola que querias borrar')
       error.status = 404
       next(error)
